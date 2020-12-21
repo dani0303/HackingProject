@@ -1,0 +1,166 @@
+<html>
+    <head>
+        <title>MC Robotics.com</title>
+        <style type="text/css">
+            .code2{
+                color: black;
+                font-family: droid;
+            }
+
+            .linefollower{
+                color: blue;
+                font font-family: 24;
+            }
+            body {
+                border-radius: 5px;
+                background: white;
+                color: white;
+                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            }
+
+            h3 {
+                border-radius: 5px;
+                background: blue;
+                color: white;
+                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            }
+
+            h4 {
+                border-radius: 5px;
+                background: blue;
+                color: white;
+                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            }
+
+            h5 {
+                border-radius: 5px;
+                background: blue;
+                color: white;
+                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                font-size: 20;
+            }
+
+            ul li {
+                border-radius: 5px;
+                background: blue;
+                color: white;
+                display: inline-block;
+                margin: 0;
+                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                padding: 10px;
+            }
+
+            a {
+                color: white;
+                text-decoration: none;
+            }
+
+            a:active {
+                background: gold;
+            }
+
+            a:hover {
+                color: rgb(128, 128, 128);
+            }           
+    
+        </style>
+    </head>
+
+    <body>
+        <h4>Welcome to MC Robotics</h4>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="photos.html">photos</a></li>
+                <li><a href="documentation.html">documentation</li>
+                <li><a href="team_members.html">team members</a></li>
+                <li><a href="aboutus.html">About us</a></li>
+            </ul>
+        <div class="linefollower">
+            <h2>Line follower code</h2>
+        </div>
+        <div class="code2">
+            <p>//line follower function by Ed Tan & Chris Lee</p>
+<p>line_follower(off_tape, on_tape);//follows the black tape on which palms lie</p>
+<p>turn_left(turn_speed, turn_time);//used to turn left onto the tape</p>
+<p>drive(speed, distance);//the inital drive up to the tape</p>
+
+<p>int l_motor_port =;//the port of the left motor</p>
+<p>int r_motor_port =;//the port of the right motor</p>
+
+<p>int ir_level=;//put the ir level u obtain from the sensor list on wallaby/link</p>
+<p>int l_ir_port=;//left ir sensor port</p>
+<p>int r_ir_port=;//right ir sensor port</p>
+
+<p>int counter = 0;//used for the turning while loop</p>
+
+<p>int fast_v =  ;// faster speed that is used for wheels</p>
+<p>int slow_v =  ; //slower speed to be used for wheels</p>
+
+<p>int var distance1 = ;//var for # of ticks used to determine how long to drive for</p>
+<p>int var distance2 = ;//var for # of ticks used to determine how long to drive for</p>
+<p>int var distance3 = ;//var for # of ticks used to determine how long to drive for</p>
+
+<p>/*if only one ir sensor is used then comment out these two functions and uncomment the one below*/</p>
+<p>//var irPort = ;//sensor port for ir sensor</p>
+<p>//distances do not have to be used if line follower is set to be running forever</p>
+<p>// all functions that are going to be used above MUST BE GLOBAL DO NOT PUT IN FUNCTIONS</p>
+
+<p>{</p>
+    
+<p>}</p>
+<p>function line_follower()</p>
+<p>{</p>
+    <p>while(true)// or move_position_counter(mPort1) <= distance_ <1, 2, etc.</p>
+    <p>{</p>
+        <p>if (l_ir_port <= ir_level && r_ir_port >= ir_level)//could change to irPort <= ir_level</p> 
+        <p>{</p>
+            <p>mav(r_motor_port, fast_v);</p>
+            <p>mav(l_motor_port, slow_v);</p>
+        <p>}</p>
+        <p>else</p>
+        <p>{</p>
+            <p>//if using one ir sensor uncomment the code BELOW</p>
+            <p>//the code commented BELOW is for when the robot has one ir sensor and makes it turn Left</p>
+            <p>/*</p>
+            <p>mav(r_motor_port, slow_v);</p>
+            <p>mav(l_motor_port, fast_v);</p>
+            <p>*/</p>
+            //if using code ABOVE then comment out code BELOW
+            <p>if( l_ir_port >= ir_level && r_ir_port <= ir_level)</p>
+            <p>// if l_ir_port is >= to ir_level AND r_ir_port <= to ir_level</p>
+            <p>{</p>
+                <p>mav(r_motor_port, slow_v);</p>
+                <p>mav(l_motor_port, fast_v);</p>
+            <p>}</p>
+            <p>if(( l_ir_port >= ir_level && r_ir_port >= ir_level)</p>
+            <p>//if both ir ports are >= to ir_level and thus both are on black</p>
+            <p>{</p>
+                <p>mav(r_motor_port, fast_v);</p>
+                <p>mav(l_motor_port, fast_v);</p>
+            <p>}</p>
+        <p>}</p>
+    <p>}</p>
+<p>}</p>
+
+<p>function turn_left()</p>
+<p>{</p>
+    <p>hile(counter <= turn_time)//while the counter is below the time of the turn, the while loop continues</p>
+    <p>{</p>
+        <p>mav(ltmotorPort, turn_speed);//robot turns for a second</p>
+        <p>msleep(1000);</p>
+        <p>counter = counter + 1;//1 is added to the counter for each second long loop</p>
+    <p>}</p>
+<p>}</p>
+
+<p>function drive()</p>
+<p>{</p>
+    <p>mav(l_motor_port, speed);</p>
+    <p>mav(r_motor_port, speed);</p>
+    <p>msleep()</p>
+<p>}</p>
+
+
+        </div>
+    </body>
+
+</html>
