@@ -7,8 +7,8 @@ from wtforms.validators import InputRequired, Email, Length
 app = Flask(__name__)
 Bootstrap(app)
 
-class LoginForms
-
+class LoginForms 
+##Push this code please
 @app.route('/')
 def index2():
     return render_template("index2.html")
