@@ -1,6 +1,10 @@
 from flask import Flask, redirect, url_for, render_template, request, session, flash
 from datetime import timedelta
+<<<<<<< HEAD
 from flask_sqlalchemy import SQLAlchemy
+=======
+import sqlalchemy
+>>>>>>> f1a670a7305e546f42613425c5a54f1bba47ec71
 
 app = Flask(__name__)
 app.secret_key = "KEY"
@@ -47,15 +51,22 @@ def login():
 @app.route('/user', methods = ['POST', 'GET'])
 def user():
     email = None
+<<<<<<< HEAD
+=======
+
+>>>>>>> f1a670a7305e546f42613425c5a54f1bba47ec71
     if "user" in session:
         user = session["user"]
 
         if request.method == 'POST':
             email = request.form['email']
             session['email'] = email
+<<<<<<< HEAD
             found_user = users.query.filter_by(name = user).first()
             found_user.email = email
             db.session.commit()
+=======
+>>>>>>> f1a670a7305e546f42613425c5a54f1bba47ec71
             flash("Email Saved")
         else:
             if "email" in session:
@@ -73,5 +84,8 @@ def logout():
     return redirect(url_for("login"))
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     db.create_all()
+=======
+>>>>>>> f1a670a7305e546f42613425c5a54f1bba47ec71
     app.run(debug=True)
