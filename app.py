@@ -5,11 +5,19 @@ from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy import SQLAlchemy
 
+
+
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sEcReTkEy'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dan/Desktop/HackingProject/sqlite3/database.db'
 Bootstrap(app)
 db = SQLAlchemy(app)
+
+
+
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,20 +25,32 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
 
+
+
+
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
     remember = BooleanField('remember me')
+
+
+
 
 class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Length(max=50)])
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
 
+
+
+
 ##Push this code please
 @app.route('/')
 def index2():
-    return render_template("index2.html")
+    return render_template("test.html")
+
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -46,6 +66,9 @@ def login():
 
     return render_template('login.html', form=form)
 
+
+
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = RegisterForm()
@@ -56,6 +79,8 @@ def signup():
         return '<h1>UserAddedToDataBase</h1>'
 
     return render_template("signup.html", form=form)
+
+
 
 @app.route('/dashboard')
 def dashboard():
