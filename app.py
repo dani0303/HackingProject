@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import  FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
@@ -44,9 +44,14 @@ class RegisterForm(FlaskForm):
 
 
 
-##Push this code please
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])##begins with page with two buttons "student" or "teacher"
 def index2():
+    if request.method == "POST":
+        if request.form['student_btn'] == 'submit_student':
+            return "<h1>Student</h1>"
+        if request.form['teacher_btn'] == 'submit_teacher':
+            return "<h1>Teacher</h1>"
+
     return render_template("test.html")
 
 
