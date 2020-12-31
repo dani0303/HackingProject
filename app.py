@@ -15,20 +15,38 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dan/Desktop/HackingP
 Bootstrap(app)
 db = SQLAlchemy(app)
 
+class Person(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+    pets = db.relationship('Pet', backref = 'owner')
+
+class Pet(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+    owner_id = db.Column(db.Integer, db.ForeignKey('person.id'))  
 
 
 
-
-class User(db.Model):
+class StudentUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
-    email = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(80))
+    ##email = db.Column(db.String(50), unique=True)
+    ##password = db.Column(db.String(80))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
 
 
 
-class LoginForm(FlaskForm):
+class TeacherUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(15), unique=True)
+    ##email = db.Column(db.String(50), unique=True)
+    ##password = db.Column(db.String(80))
+    ##accessCode = db.Column(db.String(5))
+    students = db.relationship('StudentUser', backref = 'teacher')
+
+
+class StudentLoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
     remember = BooleanField('remember me')
@@ -36,7 +54,15 @@ class LoginForm(FlaskForm):
 
 
 
-class RegisterForm(FlaskForm):
+class TeacherLoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
+    accessCode = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
+    remember = BooleanField('remember me')
+
+
+
+class StudentRegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Length(max=50)])
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
@@ -44,49 +70,84 @@ class RegisterForm(FlaskForm):
 
 
 
+class TeacherRegisterForm(FlaskForm):
+    email = StringField('email', validators=[InputRequired(), Length(max=50)])
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
+    accessCode = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
+
+
+
+
 @app.route('/', methods=['POST', 'GET'])##begins with page with two buttons "student" or "teacher"
 def index2():
-    if request.method == "POST":
-        if request.form['student_btn'] == 'submit_student':
-            return "<h1>Student</h1>"
-        if request.form['teacher_btn'] == 'submit_teacher':
-            return "<h1>Teacher</h1>"
-
-    return render_template("test.html")
+    return render_template('test.html')
 
 
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
+@app.route('/studentLogin', methods=['GET', 'POST'])
+def Studentlogin():
+    form = StudentLoginForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(username = form.username.data).first()
+        user = StudentUser.query.filter_by(username = form.username.data).first()
         if user:
             if user.password == form.password.data:
                 return render_template("dashboard.html")
         
         return '<h1>Wrong Username or Password</h1>'
 
-    return render_template('login.html', form=form)
+    return render_template('studentLogin.html', form=form)
 
 
 
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = RegisterForm()
+@app.route('/teacherLogin', methods=['GET', 'POST'])
+def Teacherlogin():
+    form = TeacherLoginForm()
+
     if form.validate_on_submit():
-        new_user = User(username=form.username.data, email=form.email.data, password=form.password.data)
-        db.session.add(new_user)
+        user = StudentUser.query.filter_by(username = form.username.data).first()
+        if user:
+            if user.password == form.password.data:
+                return render_template("dashboard.html")
+        
+        return '<h1>Wrong Username or Password</h1>'
+
+    return render_template('teacherLogin.html', form=form)
+
+
+
+
+@app.route('/StudentSignUp', methods=['GET', 'POST'])
+def StudentSignUp():
+    form = StudentRegisterForm()
+    if form.validate_on_submit():
+        new_student = StudentUser(username=form.username.data, email=form.email.data, password=form.password.data)
+        db.session.add(new_student)
         db.session.commit()
-        return '<h1>UserAddedToDataBase</h1>'
+        return redirect(url_for("team_members"))
 
-    return render_template("signup.html", form=form)
+    return render_template("StudentSignUp.html", form=form)
 
 
 
+
+@app.route('/TeacherSignUp', methods=['GET', 'POST'])
+def TeacherSignUp():
+    form = TeacherRegisterForm()
+    if form.validate_on_submit():
+        new_teacher = TeacherUser(username=form.username.data, email=form.email.data, password=form.password.data, accessCode=form.accessCode.data)
+        db.session.add(new_teacher)
+        db.session.commit()
+        return '<h1>Teacher added</h1>'
+
+    return render_template("TeacherSignUp.html", form=form)
+
+
+
+  
 @app.route('/dashboard')
 def dashboard():
     return render_template("dashboard.html")

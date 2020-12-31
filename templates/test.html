@@ -45,18 +45,23 @@
                 background-color: steelblue;
                 border-radius: 12px;
             }
+            a {
+                text-decoration: none;
+                font-size: 24px;
+                background-color: steelblue;
+                color: black;
+                padding: 10px, 24px;
+                font-style: italic;
+                border-radius: 12px;
+            }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="center">
                 <h1>Who are you?</h1>
-                <form method="POST">
-                    <button class="button1" type="submit" value="submit_student" name="student_btn">Student</button>
-                </form>
-                <form method="GET">
-                    <button class="button2" type="submit" value="submit_teacher" name="teacher_btn">Teacher</button>
-                </form>
+                <a href="/studentLogin">Student</a>
+                <a href="/teacherLogin">Teacher</a>
             </div>
         </div>
     </body>
