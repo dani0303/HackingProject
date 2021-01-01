@@ -15,35 +15,26 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dan/Desktop/HackingP
 Bootstrap(app)
 db = SQLAlchemy(app)
 
-class Person(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-    pets = db.relationship('Pet', backref = 'owner')
-
-class Pet(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-    owner_id = db.Column(db.Integer, db.ForeignKey('person.id'))  
 
 
 
-class StudentUser(db.Model):
+class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
-    ##email = db.Column(db.String(50), unique=True)
-    ##password = db.Column(db.String(80))
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(80))
     teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
 
 
 
-class TeacherUser(db.Model):
+class Teacher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
-    ##email = db.Column(db.String(50), unique=True)
-    ##password = db.Column(db.String(80))
-    ##accessCode = db.Column(db.String(5))
-    students = db.relationship('StudentUser', backref = 'teacher')
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(80))
+    accessCode = db.Column(db.String(5))
+    students = db.relationship('Student', backref = 'teacher')
 
 
 class StudentLoginForm(FlaskForm):
@@ -91,7 +82,7 @@ def Studentlogin():
     form = StudentLoginForm()
 
     if form.validate_on_submit():
-        user = StudentUser.query.filter_by(username = form.username.data).first()
+        user = Student.query.filter_by(username = form.username.data).first()
         if user:
             if user.password == form.password.data:
                 return render_template("dashboard.html")
@@ -108,7 +99,7 @@ def Teacherlogin():
     form = TeacherLoginForm()
 
     if form.validate_on_submit():
-        user = StudentUser.query.filter_by(username = form.username.data).first()
+        user = Student.query.filter_by(username = form.username.data).first()
         if user:
             if user.password == form.password.data:
                 return render_template("dashboard.html")
@@ -124,7 +115,7 @@ def Teacherlogin():
 def StudentSignUp():
     form = StudentRegisterForm()
     if form.validate_on_submit():
-        new_student = StudentUser(username=form.username.data, email=form.email.data, password=form.password.data)
+        new_student = Student(username=form.username.data, email=form.email.data, password=form.password.data)
         db.session.add(new_student)
         db.session.commit()
         return redirect(url_for("team_members"))
@@ -138,7 +129,7 @@ def StudentSignUp():
 def TeacherSignUp():
     form = TeacherRegisterForm()
     if form.validate_on_submit():
-        new_teacher = TeacherUser(username=form.username.data, email=form.email.data, password=form.password.data, accessCode=form.accessCode.data)
+        new_teacher = Teacher(username=form.username.data, email=form.email.data, password=form.password.data, accessCode=form.accessCode.data)
         db.session.add(new_teacher)
         db.session.commit()
         return '<h1>Teacher added</h1>'
