@@ -1,0 +1,23 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+<table>
+    {% for student in students %}
+    <tr>
+        <td>{{student.username}}</td>
+        <td>{{student.email}}</td>
+        <td>{{student.password}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

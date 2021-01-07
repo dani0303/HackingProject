@@ -1,3 +1,6 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
 <html>
     <head>
         <title>MC Robotics.com</title>
@@ -75,6 +78,14 @@
                 <li><a href="team_members.html">team members</a></li>
                 <li><a href="aboutus.html">About us</a></li>
             </ul>
+            <table>
+                {% for student in students %}
+                <tr>
+                    <td>{{student.username}}</td>
+                    <td>{{student.email}}</td>
+                </tr>
+                {% endfor %}
+            </table>
     </body>
 
 </html>

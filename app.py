@@ -67,6 +67,8 @@ class TeacherRegisterForm(FlaskForm):
     password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
     accessCode = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
 
+##class teacherSearch(FlaskForm):
+    ##teacherCode = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
 
 
 
@@ -74,7 +76,11 @@ class TeacherRegisterForm(FlaskForm):
 def index2():
     return render_template('test.html')
 
+##@app.route('/TeacherCode', methods=['POST', 'GET'])
+##def showAcessCode():
+    ##form = teacherSearch()
 
+    ##if form.validate_on_submit():
 
 
 @app.route('/studentLogin', methods=['GET', 'POST'])
@@ -82,14 +88,13 @@ def Studentlogin():
     form = StudentLoginForm()
 
     if form.validate_on_submit():
-        user = Student.query.filter_by(username = form.username.data).first()
-        if user:
-            if user.password == form.password.data:
-                return render_template("dashboard.html")
-        
-        return '<h1>Wrong Username or Password</h1>'
+        studentLogin = Student.query.filter_by(username=form.username.data).first()
+        if studentLogin:
+            if studentLogin.password == form.password.data:
+                students = Student.query.all()
+                return  render_template('database.html',students=students)
 
-    return render_template('studentLogin.html', form=form)
+    return render_template("studentLogin.html", form=form)
 
 
 
@@ -118,7 +123,8 @@ def StudentSignUp():
         new_student = Student(username=form.username.data, email=form.email.data, password=form.password.data)
         db.session.add(new_student)
         db.session.commit()
-        return redirect(url_for("team_members"))
+        students = Student.query.all()
+        return redirect(url_for('Studentlogin'))
 
     return render_template("StudentSignUp.html", form=form)
 
