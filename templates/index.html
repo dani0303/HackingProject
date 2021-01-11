@@ -1,3 +1,6 @@
+
+{% import "bootstrap/wtf.html" as wtf %}
+
 <html>
     <head>
         <style type="text/css">
@@ -12,12 +15,15 @@
         </style>
     </head>
     <body>
+        {% block content %}
         <div class="SearchBar">
-            <form class="form-signin">
+            <form class="form-signin" method='POST'>
                 <h2>Teacher's Code</h2>
-                <input type="text" name="" placeholder="Teacher's Code">
+                {{ form.hidden_tag() }}
+                {{ wtf.form_field(form.accessCode) }}
                 <button type="submit">Find the teacher</button>
             </form>
         </div>
+        {% endblock %}
     </body>
 </html>

@@ -9,9 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sEcReTkEy'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dan/Desktop/HackingProject/sqlite3/database.db'
+
 Bootstrap(app)
 db = SQLAlchemy(app)
 
@@ -23,6 +25,7 @@ class Student(db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+    grade = db.Column(db.String(4))
     teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
 
@@ -33,7 +36,7 @@ class Teacher(db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
-    accessCode = db.Column(db.String(5))
+    accessCode = db.Column(db.String(4))
     students = db.relationship('Student', backref = 'teacher')
 
 
@@ -67,20 +70,37 @@ class TeacherRegisterForm(FlaskForm):
     password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
     accessCode = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
 
-##class teacherSearch(FlaskForm):
-    ##teacherCode = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
 
+
+
+#class teacherSearch(FlaskForm):
+    #teacherCode = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
+    #submit = SubmitField('Search', render_kw={'class': 'btn btn-success btn-block'})
 
 
 @app.route('/', methods=['POST', 'GET'])##begins with page with two buttons "student" or "teacher"
 def index2():
     return render_template('test.html')
 
-##@app.route('/TeacherCode', methods=['POST', 'GET'])
-##def showAcessCode():
-    ##form = teacherSearch()
 
-    ##if form.validate_on_submit():
+
+
+@app.route('/TeacherCode', methods=['POST', 'GET'])
+def showAcessCode():
+    form = teacherSearch()
+    if form.validate_on_submit():
+        return redirect(url_for('search_results', query=form.search.data))
+    return render_template('index.html')
+
+
+
+
+@app.route('/search_results/<query>')
+def search_results(query):
+    ###teachers = Teacher.query(query).all()
+    return render_template('database.html', query=query, teachers=teachers)
+
+
 
 
 @app.route('/studentLogin', methods=['GET', 'POST'])
@@ -91,8 +111,8 @@ def Studentlogin():
         studentLogin = Student.query.filter_by(username=form.username.data).first()
         if studentLogin:
             if studentLogin.password == form.password.data:
-                students = Student.query.all()
-                return  render_template('database.html',students=students)
+                ##students = Student.query.all()
+                return  redirect(url_for('TeacherCode'))
 
     return render_template("studentLogin.html", form=form)
 
