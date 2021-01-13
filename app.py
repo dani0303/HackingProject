@@ -11,10 +11,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
+Bootstrap(app)
 app.config['SECRET_KEY'] = 'sEcReTkEy'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dan/Desktop/HackingProject/sqlite3/database.db'
 
-Bootstrap(app)
 db = SQLAlchemy(app)
 
 
@@ -73,9 +73,8 @@ class TeacherRegisterForm(FlaskForm):
 
 
 
-#class teacherSearch(FlaskForm):
-    #teacherCode = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
-    #submit = SubmitField('Search', render_kw={'class': 'btn btn-success btn-block'})
+class SearchForm(FlaskForm):
+    Code = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
 
 
 @app.route('/', methods=['POST', 'GET'])##begins with page with two buttons "student" or "teacher"
@@ -85,20 +84,18 @@ def index2():
 
 
 
-@app.route('/TeacherCode', methods=['POST', 'GET'])
-def showAcessCode():
-    form = teacherSearch()
+@app.route('/teacherCode', methods=['POST', 'GET'])
+def Codeform():
+    form = SearchForm()
+
     if form.validate_on_submit():
-        return redirect(url_for('search_results', query=form.search.data))
-    return render_template('index.html')
+        teacherCode = Teacher.query.filter_by(Code = form.Code.data).first()
+        if teacherCode:
+            if teacherCode.accessCode == form.Code.data:
+                return redirect(url_for('index2'))
+        return '<h1>The person you are looking for is not here</h1>'
 
-
-
-
-@app.route('/search_results/<query>')
-def search_results(query):
-    ###teachers = Teacher.query(query).all()
-    return render_template('database.html', query=query, teachers=teachers)
+    return render_template('index.html', form=form)
 
 
 
@@ -111,8 +108,7 @@ def Studentlogin():
         studentLogin = Student.query.filter_by(username=form.username.data).first()
         if studentLogin:
             if studentLogin.password == form.password.data:
-                ##students = Student.query.all()
-                return  redirect(url_for('TeacherCode'))
+                return  redirect(url_for('Codeform'))
 
     return render_template("studentLogin.html", form=form)
 
@@ -124,10 +120,10 @@ def Teacherlogin():
     form = TeacherLoginForm()
 
     if form.validate_on_submit():
-        user = Student.query.filter_by(username = form.username.data).first()
+        user = Teacher.query.filter_by(username = form.username.data).first()
         if user:
             if user.password == form.password.data:
-                return render_template("dashboard.html")
+                return redirect(url_for('index2'))
         
         return '<h1>Wrong Username or Password</h1>'
 
