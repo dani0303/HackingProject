@@ -12,9 +12,17 @@ Teacher Search
 
 {% block content %}
     <div class="container">
-        <form method='POST' action="/teacherCode">
-            <h2>Teacher's Code</h2>
+        <form method='POST' action="/search">
+            <h2 class="form-signin-heading">Teacher's Code</h2>
+            {{ form.hidden_tag() }}
             {{ wtf.form_field(form.Code) }}
             <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
+        </form>
+        <tr>
+            <td>{{Teacher.accessCode}}</td>
+            <td>{{Teacher.username}}</td>
+            <td>{{Teacher.password}}</td>
+            <td>{{Teacher.email}}</td>
+        </tr>
     </div> <!-- /container -->
 {% endblock %}

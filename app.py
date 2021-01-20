@@ -74,7 +74,7 @@ class TeacherRegisterForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    Code = StringField('accessCode', validators=[InputRequired(), Length(max=4)])
+    Code = StringField('Pin', validators=[InputRequired(), Length(max=4)])
 
 
 @app.route('/', methods=['POST', 'GET'])##begins with page with two buttons "student" or "teacher"
@@ -84,26 +84,20 @@ def index2():
 
 
 
-@app.route('/teacherCode', methods=['POST', 'GET'])
+@app.route('/search', methods=['POST', 'GET'])
 def Codeform():
     form = SearchForm()
-
+    Teachers = Teacher.query.all()
     if form.validate_on_submit():
-        teacherCode = Teacher.query.filter_by(Code = form.Code.data).first()
-        if teacherCode:
-            if teacherCode.accessCode == form.Code.data:
-                return redirect(url_for('index2'))
-        return '<h1>The person you are looking for is not here</h1>'
-
-    return render_template('index.html', form=form)
-
-
+        Teachers 
+        if 
+        ##return render_template('database.html', Teachers=Teachers)
+    return render_template('Search.html', form=form,)
 
 
 @app.route('/studentLogin', methods=['GET', 'POST'])
 def Studentlogin():
     form = StudentLoginForm()
-
     if form.validate_on_submit():
         studentLogin = Student.query.filter_by(username=form.username.data).first()
         if studentLogin:
