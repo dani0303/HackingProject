@@ -9,20 +9,20 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 
+
 app = Flask(__name__)
+Bootstrap(app)
 app.config['SECRET_KEY'] = 'sEcReTkEy'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dan/Desktop/HackingProject/sqlite3/database.db'
-Bootstrap(app)
+
 db = SQLAlchemy(app)
-
-
-
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+    grade = db.Column(db.String(4))
     teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
 
@@ -33,9 +33,8 @@ class Teacher(db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
-    accessCode = db.Column(db.String(5))
+    accessCode = db.Column(db.String(4))
     students = db.relationship('Student', backref = 'teacher')
-
 
 class StudentLoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
@@ -70,28 +69,27 @@ class TeacherRegisterForm(FlaskForm):
 
 
 
+class SearchForm(FlaskForm):
+    Code = StringField('Pin', validators=[InputRequired(), Length(max=4)])
+class JoinForm(FlaskForm):
+    Join = BooleanField('Join')
+
+
 @app.route('/', methods=['POST', 'GET'])##begins with page with two buttons "student" or "teacher"
 def index2():
     return render_template('test.html')
 
 
 
-
-@app.route('/studentLogin', methods=['GET', 'POST'])
-def Studentlogin():
-    form = StudentLoginForm()
-
-    if form.validate_on_submit():
-        user = Student.query.filter_by(username = form.username.data).first()
-        if user:
-            if user.password == form.password.data:
-                return render_template("dashboard.html")
-        
-        return '<h1>Wrong Username or Password</h1>'
-
-    return render_template('studentLogin.html', form=form)
-
-
+@app.route('/search', methods=['POST', 'GET'])
+def Codeform():
+    form = SearchForm()
+    if request.method == 'POST' and 'tag' in request.form:
+        tag = request.form['tag']
+        search = "%{}%".format(tag)
+        teachers = Teacher.query.filter(Teacher.accessCode.like(search)).all()
+        return render_template('Search.html', teachers=teachers, tag=tag)
+    return render_template('Search.html', form=form)
 
 
 @app.route('/teacherLogin', methods=['GET', 'POST'])
@@ -99,30 +97,14 @@ def Teacherlogin():
     form = TeacherLoginForm()
 
     if form.validate_on_submit():
-        user = Student.query.filter_by(username = form.username.data).first()
+        user = Teacher.query.filter_by(username = form.username.data).first()
         if user:
             if user.password == form.password.data:
-                return render_template("dashboard.html")
+                return redirect(url_for('index2'))
         
         return '<h1>Wrong Username or Password</h1>'
 
     return render_template('teacherLogin.html', form=form)
-
-
-
-
-@app.route('/StudentSignUp', methods=['GET', 'POST'])
-def StudentSignUp():
-    form = StudentRegisterForm()
-    if form.validate_on_submit():
-        new_student = Student(username=form.username.data, email=form.email.data, password=form.password.data)
-        db.session.add(new_student)
-        db.session.commit()
-        return redirect(url_for("team_members"))
-
-    return render_template("StudentSignUp.html", form=form)
-
-
 
 
 @app.route('/TeacherSignUp', methods=['GET', 'POST'])
@@ -137,8 +119,32 @@ def TeacherSignUp():
     return render_template("TeacherSignUp.html", form=form)
 
 
+@app.route('/studentLogin', methods=['GET', 'POST'])
+def Studentlogin():
+    form = StudentLoginForm()
+    if form.validate_on_submit():
+        studentLogin = Student.query.filter_by(username=form.username.data).first()
+        if studentLogin:
+            if studentLogin.password == form.password.data:
+                return  redirect(url_for('Codeform'))
 
-  
+    return render_template("studentLogin.html", form=form)
+
+
+
+@app.route('/StudentSignUp', methods=['GET', 'POST'])
+def StudentSignUp():
+    form = StudentRegisterForm()
+    if form.validate_on_submit():
+        new_student = Student(username=form.username.data, email=form.email.data, password=form.password.data)
+        db.session.add(new_student)
+        db.session.commit()
+        students = Student.query.all()
+        return redirect(url_for('Studentlogin'))
+
+    return render_template("StudentSignUp.html", form=form)
+
+
 @app.route('/dashboard')
 def dashboard():
     return render_template("dashboard.html")
