@@ -68,6 +68,10 @@ class TeacherRegisterForm(FlaskForm):
 
 
 
+class JoinForm(FlaskForm):
+    join = BooleanField('Join')
+
+
 
 class SearchForm(FlaskForm):
     Code = StringField('Pin', validators=[InputRequired(), Length(max=4)])
@@ -89,6 +93,9 @@ def Codeform():
         search = "%{}%".format(tag)
         teachers = Teacher.query.filter(Teacher.accessCode.like(search)).all()
         return render_template('Search.html', teachers=teachers, tag=tag)
+        JoinForm = JoinForm()
+        if JoinForm.validate_on_submit():
+            
     return render_template('Search.html', form=form)
 
 
