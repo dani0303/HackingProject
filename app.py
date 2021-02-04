@@ -17,9 +17,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dan/Desktop/HackingP
 
 db = SQLAlchemy(app)
 
-
-
-
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
@@ -38,7 +35,6 @@ class Teacher(db.Model):
     password = db.Column(db.String(80))
     accessCode = db.Column(db.String(4))
     students = db.relationship('Student', backref = 'teacher')
-
 
 class StudentLoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
@@ -75,6 +71,8 @@ class TeacherRegisterForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     Code = StringField('Pin', validators=[InputRequired(), Length(max=4)])
+class JoinForm(FlaskForm):
+    Join = BooleanField('Join')
 
 
 @app.route('/', methods=['POST', 'GET'])##begins with page with two buttons "student" or "teacher"
@@ -83,30 +81,15 @@ def index2():
 
 
 
-
 @app.route('/search', methods=['POST', 'GET'])
 def Codeform():
     form = SearchForm()
-    Teachers = Teacher.query.all()
-    if form.validate_on_submit():
-        Teachers 
-        if 
-        ##return render_template('database.html', Teachers=Teachers)
-    return render_template('Search.html', form=form,)
-
-
-@app.route('/studentLogin', methods=['GET', 'POST'])
-def Studentlogin():
-    form = StudentLoginForm()
-    if form.validate_on_submit():
-        studentLogin = Student.query.filter_by(username=form.username.data).first()
-        if studentLogin:
-            if studentLogin.password == form.password.data:
-                return  redirect(url_for('Codeform'))
-
-    return render_template("studentLogin.html", form=form)
-
-
+    if request.method == 'POST' and 'tag' in request.form:
+        tag = request.form['tag']
+        search = "%{}%".format(tag)
+        teachers = Teacher.query.filter(Teacher.accessCode.like(search)).all()
+        return render_template('Search.html', teachers=teachers, tag=tag)
+    return render_template('Search.html', form=form)
 
 
 @app.route('/teacherLogin', methods=['GET', 'POST'])
@@ -124,6 +107,29 @@ def Teacherlogin():
     return render_template('teacherLogin.html', form=form)
 
 
+@app.route('/TeacherSignUp', methods=['GET', 'POST'])
+def TeacherSignUp():
+    form = TeacherRegisterForm()
+    if form.validate_on_submit():
+        new_teacher = Teacher(username=form.username.data, email=form.email.data, password=form.password.data, accessCode=form.accessCode.data)
+        db.session.add(new_teacher)
+        db.session.commit()
+        return '<h1>Teacher added</h1>'
+
+    return render_template("TeacherSignUp.html", form=form)
+
+
+@app.route('/studentLogin', methods=['GET', 'POST'])
+def Studentlogin():
+    form = StudentLoginForm()
+    if form.validate_on_submit():
+        studentLogin = Student.query.filter_by(username=form.username.data).first()
+        if studentLogin:
+            if studentLogin.password == form.password.data:
+                return  redirect(url_for('Codeform'))
+
+    return render_template("studentLogin.html", form=form)
+
 
 
 @app.route('/StudentSignUp', methods=['GET', 'POST'])
@@ -139,22 +145,6 @@ def StudentSignUp():
     return render_template("StudentSignUp.html", form=form)
 
 
-
-
-@app.route('/TeacherSignUp', methods=['GET', 'POST'])
-def TeacherSignUp():
-    form = TeacherRegisterForm()
-    if form.validate_on_submit():
-        new_teacher = Teacher(username=form.username.data, email=form.email.data, password=form.password.data, accessCode=form.accessCode.data)
-        db.session.add(new_teacher)
-        db.session.commit()
-        return '<h1>Teacher added</h1>'
-
-    return render_template("TeacherSignUp.html", form=form)
-
-
-
-  
 @app.route('/dashboard')
 def dashboard():
     return render_template("dashboard.html")

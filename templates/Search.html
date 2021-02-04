@@ -14,15 +14,22 @@ Teacher Search
     <div class="container">
         <form method='POST' action="/search">
             <h2 class="form-signin-heading">Teacher's Code</h2>
-            {{ form.hidden_tag() }}
-            {{ wtf.form_field(form.Code) }}
+            <input type="text" class="form-control" name="tag" placeholder="code"
             <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
         </form>
-        <tr>
-            <td>{{Teacher.accessCode}}</td>
-            <td>{{Teacher.username}}</td>
-            <td>{{Teacher.password}}</td>
-            <td>{{Teacher.email}}</td>
-        </tr>
+        <table>
+            {% for teacher in teachers %}
+            <tr>
+                <td>{{teacher.accessCode}}</td>
+                <td>{{teacher.username}}</td>
+                <td>{{teacher.email}}</td>
+                <td>
+                    <form method="POST">
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">Join</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
     </div> <!-- /container -->
 {% endblock %}

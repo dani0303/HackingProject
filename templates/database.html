@@ -13,12 +13,12 @@ Sign Up
 {% block content %}
 <table>
     <h6>Hello</h6>
-        {% for Teacher in Teachers %}
+        {% for teacher in teachers %}
             <tr>
-                <td>{{Teacher.accessCode}}</td>
-                <td>{{Teacher.username}}</td>
-                <td>{{Teacher.password}}</td>
-                <td>{{Teacher.email}}</td>
+                <td>{{teacher.accessCode}}</td>
+                <td>{{teacher.username}}</td>
+                <td>{{teacher.password}}</td>
+                <td>{{teacher.email}}</td>
             </tr>
         {% endfor %}
 </table>
