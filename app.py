@@ -36,6 +36,9 @@ class Teacher(db.Model):
     accessCode = db.Column(db.String(4))
     students = db.relationship('Student', backref = 'teacher')
 
+
+
+
 class StudentLoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=4, max=15)])
@@ -93,8 +96,6 @@ def Codeform():
         search = "%{}%".format(tag)
         teachers = Teacher.query.filter(Teacher.accessCode.like(search)).all()
         return render_template('Search.html', teachers=teachers, tag=tag)
-        JoinForm = JoinForm()
-        if JoinForm.validate_on_submit():
             
     return render_template('Search.html', form=form)
 
