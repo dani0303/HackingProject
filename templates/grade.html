@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <table>
+            <tr>
+                {% for studentLogin in studentLogin %}
+                    <td>{{studentLogin.username}}</td>
+                {% endfor %}
+            </tr>
+        </table>
+    </body>
+</html>

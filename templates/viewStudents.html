@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            tr {
+                display: table-row;
+                vertical-align: inherit;
+                border-color: inherit;
+            }
+
+            td{
+                font-size: x-large;
+                font-weight: 800;
+            }
+            table{
+                vertical-align: middle;
+            }
+            .center{
+                margin-left: auto;
+                margin-right: auto;
+            }
+            th{
+                border: 10px black;
+            }
+        </style>
+    </head>
+    <body>
+        <table>
+            <tr>
+                {% for classes in classes %}
+                    <td>{{classes.grade}}</td>
+                    <td>{{classes.username}}</td>
+                {% endfor %}
+            </tr>
+        </table>
+    </body>
+</html>

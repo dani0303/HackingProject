@@ -17,19 +17,5 @@ Teacher Search
             <input type="text" class="form-control" name="tag" placeholder="code"
             <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
         </form>
-        <table>
-            {% for teacher in teachers %}
-            <tr>
-                <td>{{teacher.accessCode}}</td>
-                <td>{{teacher.username}}</td>
-                <td>{{teacher.email}}</td>
-                <td>
-                    <form method="POST">
-                        <button class="btn btn-lg btn-primary btn-block" type="submit">Join</button>
-                    </form>
-                </td>
-            </tr>
-        {% endfor %}
-        </table>
     </div> <!-- /container -->
 {% endblock %}
